@@ -3,7 +3,7 @@ import logging
 import json
 from typing import Dict, Type
 
-from pyHS100 import (TPLinkSmartHomeProtocol, SmartDevice, SmartPlug,
+from pyHS100 import (TPLinkLocalProtocol, SmartDevice, SmartPlug,
                      SmartBulb, SmartStrip)
 
 _LOGGER = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ class Discover:
                        "emeter": {"get_realtime": None}}
 
     @staticmethod
-    def discover(protocol: TPLinkSmartHomeProtocol = None,
+    def discover(protocol: TPLinkLocalProtocol = None,
                  port: int = 9999,
                  timeout: int = 3) -> Dict[str, SmartDevice]:
         """
@@ -28,10 +28,10 @@ class Discover:
         :rtype: dict
         :return: Array of json objects {"ip", "port", "sys_info"}
         """
-        if protocol is None:
-            protocol = TPLinkSmartHomeProtocol()
-
         target = "255.255.255.255"
+        
+        if protocol is None:
+            protocol = TPLinkLocalProtocol(target)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -63,7 +63,7 @@ class Discover:
 
     @staticmethod
     def discover_single(host: str,
-                        protocol: TPLinkSmartHomeProtocol = None
+                        protocol: TPLinkLocalProtocol = None
                         ) -> SmartDevice:
         """
         Similar to discover(), except only return device object for a single
@@ -75,9 +75,9 @@ class Discover:
         :return: Object for querying/controlling found device.
         """
         if protocol is None:
-            protocol = TPLinkSmartHomeProtocol()
+            protocol = TPLinkLocalProtocol(host)
 
-        info = protocol.query(host, Discover.DISCOVERY_QUERY)
+        info = protocol.query(Discover.DISCOVERY_QUERY)
 
         device_class = Discover._get_device_class(info)
         if device_class is not None:

@@ -19,7 +19,7 @@ import warnings
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple, Optional
 
-from .protocol import TPLinkSmartHomeProtocol
+from .protocol import TPLinkSmartHomeProtocol, TPLinkLocalProtocol
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class SmartDevice(object):
     ALL_FEATURES = (FEATURE_ENERGY_METER, FEATURE_TIMER)
 
     def __init__(self,
-                 host: str,
+                 host: Optional[str] = None,
                  protocol: Optional[TPLinkSmartHomeProtocol] = None,
                  context: str = None) -> None:
         """
@@ -82,9 +82,8 @@ class SmartDevice(object):
         :param str host: host name or ip address on which the device listens
         :param context: optional child ID for context in a parent device
         """
-        self.host = host
         if not protocol:
-            protocol = TPLinkSmartHomeProtocol()
+            protocol = TPLinkLocalProtocol(host)
         self.protocol = protocol
         self.emeter_type = "emeter"  # type: str
         self.context = context
@@ -112,10 +111,7 @@ class SmartDevice(object):
         if arg is None:
             arg = {}
         try:
-            response = self.protocol.query(
-                host=self.host,
-                request=request,
-            )
+            response = self.protocol.query(request)
         except Exception as ex:
             raise SmartDeviceException('Communication error') from ex
 
@@ -561,9 +557,8 @@ class SmartDevice(object):
         is_on = self.is_on
         if callable(is_on):
             is_on = is_on()
-        return "<%s at %s (%s), is_on: %s - dev specific: %s>" % (
+        return "<%s, alias: %s, is_on: %s - dev specific: %s>" % (
             self.__class__.__name__,
-            self.host,
             self.alias,
             is_on,
             self.state_information)

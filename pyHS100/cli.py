@@ -138,7 +138,7 @@ def state(ctx, dev):
                             (aliases[child],
                              "ON" if is_on[child] else "OFF"),
                             fg="green" if is_on[child] else "red"))
-    click.echo("Host/IP: %s" % dev.host)
+    #TODO click.echo("Host/IP: %s" % dev.host)
     for k, v in dev.state_information.items():
         click.echo("%s: %s" % (k, v))
     click.echo(click.style("== Generic information ==", bold=True))

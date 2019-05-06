@@ -17,5 +17,5 @@ from .smartdevice import SmartDevice, SmartDeviceException, EmeterStatus
 from .smartplug import SmartPlug
 from .smartbulb import SmartBulb
 from .smartstrip import SmartStrip, SmartStripException
-from .protocol import TPLinkSmartHomeProtocol
+from .protocol import TPLinkSmartHomeProtocol, TPLinkLocalProtocol, TPLinkRemoteProtocol
 from .discover import Discover

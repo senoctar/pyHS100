@@ -32,7 +32,7 @@ class SmartPlug(SmartDevice):
     SWITCH_STATE_UNKNOWN = 'UNKNOWN'
 
     def __init__(self,
-                 host: str,
+                 host: str = None,
                  protocol: 'TPLinkSmartHomeProtocol' = None,
                  context: str = None) -> None:
         SmartDevice.__init__(self, host, protocol, context)
